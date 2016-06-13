@@ -3,6 +3,8 @@ ruby '2.3.1'
 
 gem 'rails', '4.2.6'
 gem 'pg', '~> 0.15'
+gem 'puma'
+gem 'rack-timeout'
 
 gem 'coffee-rails', '~> 4.1.0'
 gem 'jbuilder', '~> 2.0'
