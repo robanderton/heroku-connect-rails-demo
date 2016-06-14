@@ -16,7 +16,7 @@
   },
   "addons": [
     "herokuconnect",
-    "heroku-postgresql:standard-0"
+    "heroku-postgresql"
   ],
   "buildpacks": [
     {
