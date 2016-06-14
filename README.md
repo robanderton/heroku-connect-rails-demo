@@ -19,6 +19,10 @@
 
 ## Deployment
 
+* Use the button to deploy to Heroku:
+
+  [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
 * Open the Heroku Connect dashboard to complete setup:
 
     * connect to the same database as any non-Connect mapped tables (multiple databases are not supported)

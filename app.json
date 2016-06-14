@@ -1,0 +1,26 @@
+{
+  "name": "heroku-connect-rails-demo",
+  "description": "Demo Rails app using Heroku Connect",
+  "repository": "https://github.com/robanderton/heroku-connect-rails-demo",
+  "keywords": ["Connect", "Rails", "Salesforce"],
+  "env": {
+    "SECRET_KEY_BASE": {
+      "generator": "secret"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "Standard-1X"
+    }
+  },
+  "addons": [
+    "herokuconnect",
+    "heroku-postgresql:standard-0"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/ruby"
+    }
+  ]
+}
