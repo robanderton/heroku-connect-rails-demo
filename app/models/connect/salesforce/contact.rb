@@ -1,3 +1,5 @@
+require_dependency 'connect/salesforce/base'
+
 module Connect
   module Salesforce
     class Contact < Base
