@@ -10,7 +10,7 @@ module Connect
 
       belongs_to :external_account,
         class_name: 'Account',
-        foreign_key: :contact__r__externalid__c,
+        foreign_key: :account__externalid__c,
         primary_key: :externalid__c
 
       validates_presence_of :email, :firstname, :lastname

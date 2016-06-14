@@ -13,7 +13,7 @@ module Connect
       end
 
       # Call from subclasses to have an External ID automatically populated on create
-      def has_external_id(attribute = :externalid)
+      def has_external_id(attribute = :externalid__c)
         attr_readonly(attribute)
         before_create { self.send("#{attribute}=", self.class.generate_external_id) unless self.send("#{attribute}?")}
       end
