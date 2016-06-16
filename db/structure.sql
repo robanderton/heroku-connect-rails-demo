@@ -61,7 +61,7 @@ CREATE TABLE account (
     name character varying(255),
     phone character varying(40),
     website character varying(255),
-    externalid__c character varying(36),
+    externalid__c character varying(36) DEFAULT ''::character varying,
     isdeleted boolean,
     createddate timestamp without time zone,
     systemmodstamp timestamp without time zone,
@@ -101,7 +101,7 @@ CREATE TABLE contact (
     email character varying(80),
     firstname character varying(40),
     lastname character varying(80),
-    account__externalid__c character varying(36),
+    account__externalid__c character varying(36) DEFAULT ''::character varying,
     isdeleted boolean,
     createddate timestamp without time zone,
     systemmodstamp timestamp without time zone,
@@ -195,7 +195,7 @@ CREATE INDEX hc_idx_contact_systemmodstamp ON contact USING btree (systemmodstam
 -- Name: hcu_idx_account_externalid__c; Type: INDEX; Schema: salesforce; Owner: -
 --
 
-CREATE UNIQUE INDEX hcu_idx_account_externalid__c ON account USING btree (externalid__c);
+CREATE UNIQUE INDEX hcu_idx_account_externalid__c ON account USING btree (externalid__c) WHERE ((externalid__c)::text <> ''::text);
 
 
 --
@@ -213,10 +213,25 @@ CREATE UNIQUE INDEX hcu_idx_contact_sfid ON contact USING btree (sfid);
 
 
 --
+-- Name: idx_account_sfid_externalid__c; Type: INDEX; Schema: salesforce; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_account_sfid_externalid__c ON account USING btree (sfid, externalid__c);
+
+
+--
 -- Name: idx_contact_account__externalid__c; Type: INDEX; Schema: salesforce; Owner: -
 --
 
 CREATE INDEX idx_contact_account__externalid__c ON contact USING btree (account__externalid__c);
+
+
+--
+-- Name: fk_contact_accountid_account__externalid__c; Type: FK CONSTRAINT; Schema: salesforce; Owner: -
+--
+
+ALTER TABLE ONLY contact
+    ADD CONSTRAINT fk_contact_accountid_account__externalid__c FOREIGN KEY (accountid, account__externalid__c) REFERENCES account(sfid, externalid__c) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -232,4 +247,12 @@ INSERT INTO schema_migrations (version) VALUES ('20160614113646');
 INSERT INTO schema_migrations (version) VALUES ('20160614113653');
 
 INSERT INTO schema_migrations (version) VALUES ('20160614114454');
+
+INSERT INTO schema_migrations (version) VALUES ('20160616170707');
+
+INSERT INTO schema_migrations (version) VALUES ('20160616171054');
+
+INSERT INTO schema_migrations (version) VALUES ('20160616225802');
+
+INSERT INTO schema_migrations (version) VALUES ('20160616225941');
 
