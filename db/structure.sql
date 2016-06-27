@@ -34,7 +34,72 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
+--
+-- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
+
+
 SET search_path = public, pg_catalog;
+
+--
+-- Name: externalid_uuid_proc(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION externalid_uuid_proc() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+        DECLARE
+          externalid_column varchar;
+          oldxmlbinary varchar;
+        BEGIN
+          -- Get external ID column name
+          IF TG_ARGV[0] IS NOT NULL THEN
+            externalid_column := TG_ARGV[0]::text;
+          ELSE
+            externalid_column := 'externalid__c';
+          END IF;
+
+          -- Save old value
+          oldxmlbinary := get_xmlbinary();
+
+          -- Change value to ensure writing to _trigger_log is enabled
+          EXECUTE format('SET SESSION xmlbinary TO base64');
+
+          -- Update the external ID
+          EXECUTE format('UPDATE %I.%I SET %I = %L WHERE %I = %L', TG_TABLE_SCHEMA, TG_TABLE_NAME, externalid_column, uuid_generate_v4(), 'id', NEW.id);
+
+          -- Reset the value
+          EXECUTE format('SET SESSION xmlbinary TO %L', oldxmlbinary);
+
+          RETURN NEW;
+        END;
+      $$;
+
+
+--
+-- Name: get_xmlbinary(); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION get_xmlbinary() RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$
+        DECLARE
+          xmlbin varchar;
+        BEGIN
+          select into xmlbin setting from pg_settings where name='xmlbinary';
+          RETURN xmlbin;
+        END;
+      $$;
+
 
 SET default_tablespace = '';
 
@@ -227,6 +292,13 @@ CREATE INDEX idx_contact_account__externalid__c ON contact USING btree (account_
 
 
 --
+-- Name: account_externalid_trigger; Type: TRIGGER; Schema: salesforce; Owner: -
+--
+
+CREATE TRIGGER account_externalid_trigger AFTER INSERT OR UPDATE ON account FOR EACH ROW WHEN ((NULLIF(btrim((new.externalid__c)::text), ''::text) IS NULL)) EXECUTE PROCEDURE public.externalid_uuid_proc();
+
+
+--
 -- Name: fk_contact_accountid_account__externalid__c; Type: FK CONSTRAINT; Schema: salesforce; Owner: -
 --
 
@@ -255,4 +327,12 @@ INSERT INTO schema_migrations (version) VALUES ('20160616171054');
 INSERT INTO schema_migrations (version) VALUES ('20160616225802');
 
 INSERT INTO schema_migrations (version) VALUES ('20160616225941');
+
+INSERT INTO schema_migrations (version) VALUES ('20160627103927');
+
+INSERT INTO schema_migrations (version) VALUES ('20160627105702');
+
+INSERT INTO schema_migrations (version) VALUES ('20160627105844');
+
+INSERT INTO schema_migrations (version) VALUES ('20160627110535');
 
