@@ -5,11 +5,6 @@ module Connect
     class Contact < Base
 
       belongs_to :account,
-        foreign_key: :accountid,
-        primary_key: :sfid
-
-      belongs_to :external_account,
-        class_name: 'Account',
         foreign_key: :account__externalid__c,
         primary_key: :externalid__c
 
