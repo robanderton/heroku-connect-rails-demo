@@ -8,14 +8,14 @@ module Connect
     class << self
 
       # Use a v4 UUID for External IDs
-      def generate_external_id
+      def generate_externalid
         SecureRandom.uuid
       end
 
       # Call from subclasses to have an External ID automatically populated on create
-      def has_external_id(attribute = :externalid__c)
+      def has_externalid(attribute = :externalid__c)
         attr_readonly(attribute)
-        before_create { self.send("#{attribute}=", self.class.generate_external_id) unless self.send("#{attribute}?")}
+        before_create { self.send("#{attribute}=", self.class.generate_externalid) unless self.send("#{attribute}?")}
       end
 
       # Convenience method to prefix table names with the schema name

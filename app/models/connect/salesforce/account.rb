@@ -9,7 +9,7 @@ module Connect
         foreign_key: :account__externalid__c,
         primary_key: :externalid__c
 
-      has_external_id
+      has_externalid
 
       validates :name, length: { maximum: 255 }, presence: true
       validates :phone, length: { maximum: 40 }

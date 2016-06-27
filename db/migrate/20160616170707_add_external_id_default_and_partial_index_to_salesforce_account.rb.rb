@@ -1,7 +1,7 @@
 class AddExternalIdDefaultAndPartialIndexToSalesforceAccount < ActiveRecord::Migration
 
   def up
-    drop_external_id_index
+    drop_externalid_index
 
     # Partial index to allow multiple entries with blank External ID
     add_index(table_name, :externalid__c, name: new_index_name, where: "externalid__c != ''", unique: true)
@@ -15,7 +15,7 @@ class AddExternalIdDefaultAndPartialIndexToSalesforceAccount < ActiveRecord::Mig
   end
 
   def down
-    drop_external_id_index
+    drop_externalid_index
 
     execute %{
       UPDATE #{table_name}
@@ -29,7 +29,7 @@ class AddExternalIdDefaultAndPartialIndexToSalesforceAccount < ActiveRecord::Mig
 
   protected
 
-    def drop_external_id_index
+    def drop_externalid_index
       execute("DROP INDEX IF EXISTS #{Connect::Salesforce::Base.schema_qualified_name(new_index_name)};")
     end
 
